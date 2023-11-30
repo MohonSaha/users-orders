@@ -86,7 +86,7 @@ const userSchema = new Schema<IUser, UserModel>({
     required: [true, 'Address is required'],
   },
   orders: {
-    type: userOrderSchema,
+    type: [userOrderSchema],
   },
 })
 

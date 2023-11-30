@@ -9,4 +9,9 @@ router.get('/:userId', userControllers.getSingleUser)
 router.put('/:userId', userControllers.updateUser)
 router.delete('/:userId', userControllers.deleteUser)
 
+// for orders
+router.put('/:userId/orders', userControllers.addOrder)
+
+// PUT /api/users/:userId/orders
+
 export const UserRoute = router

@@ -136,10 +136,100 @@ const deleteUser = async (req: Request, res: Response) => {
   }
 }
 
+// append new order
+// const addProductToOrder = async (req: Request, res: Response) => {
+//   try {
+//     const userId = parseInt(req.params.userId)
+//     const { productName, price, quantity } = req.body
+
+//     // Find the user by userId
+//     const user = await User.findOne({ userId })
+
+//     if (!user) {
+//       // User not found, return an error response
+//       return res.status(404).json({
+//         success: false,
+//         message: 'User not found',
+//         error: {
+//           code: 404,
+//           description: 'User not found!',
+//         },
+//       })
+//     }
+
+//     // Check if the user already has an 'orders' property, if not, create it
+//     if (!user.orders) {
+//       user.orders = []
+//     }
+
+//     // Add the new product to the 'orders' array
+//     user.orders.push({
+//       productName,
+//       price,
+//       quantity,
+//     })
+
+//     // Save the updated user document
+//     await user.save()
+
+//     res.status(201).json({
+//       success: true,
+//       message: 'Order created successfully!',
+//       data: user,
+//     })
+//   } catch (error: any) {
+//     console.error('Error adding product to order:', error)
+//     res.status(500).json({
+//       success: false,
+//       message: error.message || 'Internal Server Error',
+//       error: {
+//         code: 500,
+//         description: 'Internal Server Error',
+//       },
+//     })
+//   }
+// }
+
+// add order
+const addOrder = async (req: Request, res: Response) => {
+  try {
+    const userId = parseInt(req.params.userId, 10)
+    const orderInfo = req.body
+
+    // Use the custom static method to check if the user exists
+    const existingUser = await User.isUserExist(userId)
+    if (existingUser) {
+      await userServices.addOrderIntoDB(userId, orderInfo)
+      res.status(200).json({
+        success: true,
+        message: 'Order created successfully!',
+        data: null,
+      })
+    } else {
+      res.status(404).json({
+        success: false,
+        message: 'User not found',
+        error: {
+          code: 404,
+          description: 'User not found!',
+        },
+      })
+    }
+  } catch (error: any) {
+    // eslint-disable-next-line no-console
+    console.log(error)
+    res.status(500).json({
+      status: 'fail',
+      message: error.message || 'something went wrong',
+    })
+  }
+}
+
 export const userControllers = {
   crateUser,
   getAllUser,
   getSingleUser,
   updateUser,
   deleteUser,
+  addOrder,
 }
