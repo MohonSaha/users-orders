@@ -115,9 +115,31 @@ const updateUser = async (req: Request, res: Response) => {
   }
 }
 
+// delete a user
+const deleteUser = async (req: Request, res: Response) => {
+  try {
+    const id = parseInt(req.params.userId, 10)
+    await userServices.deleteUser(id)
+    res.status(200).json({
+      status: 'succcess',
+      message: 'user deleted successfully',
+      data: null,
+    })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    // eslint-disable-next-line no-console
+    console.log(error)
+    res.status(500).json({
+      status: 'fail',
+      message: error.message || 'something went wrong',
+    })
+  }
+}
+
 export const userControllers = {
   crateUser,
   getAllUser,
   getSingleUser,
   updateUser,
+  deleteUser,
 }

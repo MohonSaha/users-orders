@@ -31,9 +31,16 @@ const updateUser = async (
   return result
 }
 
+// delete a user
+const deleteUser = async (userId: number): Promise<IUser | null> => {
+  const result = await User.findOneAndDelete({ userId: userId })
+  return result
+}
+
 export const userServices = {
   createUser,
   getAllUsers,
   getSingleUser,
   updateUser,
+  deleteUser,
 }
