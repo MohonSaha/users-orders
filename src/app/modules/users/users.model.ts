@@ -4,6 +4,7 @@ import {
   IUserAddress,
   IUserName,
   IUserOrder,
+  OrdersTotalModel,
   UserModel,
 } from './users.interface'
 import { model } from 'mongoose'
@@ -106,6 +107,33 @@ userSchema.statics.isUserExist = async function (userId: number) {
   const exisingUser = await User.findOne({ userId })
   return exisingUser
 }
+
+// userSchema.statics.calcOrdersTotal = async function (userId: number) {
+//
+
+//   const stats = await this.aggregate([
+//     { $match: { userId: userId } },
+//     { $unwind: '$orders' },
+//     {
+//       $group: {
+//         _id: '$_id',
+//         totalPrice: { $sum: '$orders.price' },
+//       },
+//     },
+//   ])
+
+//   if (stats.length > 0) {
+//     await Tour.findByIdAndUpdate(tourId, {
+//       ratingQuantity: stats[0].numberOfRatings,
+//       ratingAverage: stats[0].avgRating,
+//     })
+//   } else {
+//     await Tour.findByIdAndUpdate(tourId, {
+//       ratingQuantity: 0,
+//       ratingAverage: 0,
+//     })
+//   }
+// }
 
 const User = model<IUser, UserModel>('User', userSchema)
 

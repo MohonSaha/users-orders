@@ -15,6 +15,8 @@ router.put('/:userId/orders', userControllers.addOrder)
 // for get user's orders
 router.get('/:userId/orders', userControllers.getOrders)
 
+router.get('/:userId/orders/total-price', userControllers.totalOrdersPrice)
+
 // PUT /api/users/:userId/orders
 
 export const UserRoute = router

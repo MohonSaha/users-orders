@@ -202,6 +202,58 @@ const getOrders = async (req: Request, res: Response) => {
   }
 }
 
+const totalOrdersPrice = async (req: Request, res: Response) => {
+  try {
+    const userId = parseInt(req.params.userId, 10)
+
+    const existingUser = await User.isUserExist(userId)
+    if (existingUser) {
+      const result = await User.aggregate([
+        { $match: { userId: userId } },
+        { $unwind: '$orders' },
+        {
+          $group: {
+            _id: '$_id',
+            totalPrice: {
+              $sum: { $multiply: ['$orders.price', '$orders.quantity'] },
+            },
+          },
+        },
+      ])
+
+      if (result.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: 'User not found or no orders available',
+        })
+      }
+
+      const totalPrice = parseFloat(result[0].totalPrice.toFixed(2))
+
+      res.status(200).json({
+        success: true,
+        message: 'Total price calculated successfully!',
+        data: { totalPrice },
+      })
+    } else {
+      res.status(404).json({
+        success: false,
+        message: 'User not found',
+        error: {
+          code: 404,
+          description: 'User not found!',
+        },
+      })
+    }
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: 'Something went wrong',
+      error: err,
+    })
+  }
+}
+
 export const userControllers = {
   crateUser,
   getAllUser,
@@ -210,4 +262,5 @@ export const userControllers = {
   deleteUser,
   addOrder,
   getOrders,
+  totalOrdersPrice,
 }
