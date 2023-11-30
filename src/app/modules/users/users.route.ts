@@ -9,8 +9,11 @@ router.get('/:userId', userControllers.getSingleUser)
 router.put('/:userId', userControllers.updateUser)
 router.delete('/:userId', userControllers.deleteUser)
 
-// for orders
+// for add orders
 router.put('/:userId/orders', userControllers.addOrder)
+
+// for get user's orders
+router.get('/:userId/orders', userControllers.getOrders)
 
 // PUT /api/users/:userId/orders
 
