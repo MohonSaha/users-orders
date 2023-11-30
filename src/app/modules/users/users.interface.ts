@@ -30,10 +30,8 @@ export interface IUser {
   orders: IUserOrder[] | null
 }
 
+// static methods
 export interface UserModel extends Model<IUser> {
   isUserExist(id: number): Promise<IUser | null>
-}
-
-export interface OrdersTotalModel extends Model<IUser> {
-  calcOrdersTotal(id: number): Promise<void>
+  calcOrdersTotal(userId: number): Promise<{ result: any; totalPrice: number }>
 }

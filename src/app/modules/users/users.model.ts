@@ -108,32 +108,25 @@ userSchema.statics.isUserExist = async function (userId: number) {
   return exisingUser
 }
 
-// userSchema.statics.calcOrdersTotal = async function (userId: number) {
-//
+userSchema.statics.calcOrdersTotal = async function (
+  userId: number,
+): Promise<{ result: any; totalPrice: number }> {
+  const result = await User.aggregate([
+    { $match: { userId: userId } },
+    { $unwind: '$orders' },
+    {
+      $group: {
+        _id: '$_id',
+        totalPrice: {
+          $sum: { $multiply: ['$orders.price', '$orders.quantity'] },
+        },
+      },
+    },
+  ])
 
-//   const stats = await this.aggregate([
-//     { $match: { userId: userId } },
-//     { $unwind: '$orders' },
-//     {
-//       $group: {
-//         _id: '$_id',
-//         totalPrice: { $sum: '$orders.price' },
-//       },
-//     },
-//   ])
-
-//   if (stats.length > 0) {
-//     await Tour.findByIdAndUpdate(tourId, {
-//       ratingQuantity: stats[0].numberOfRatings,
-//       ratingAverage: stats[0].avgRating,
-//     })
-//   } else {
-//     await Tour.findByIdAndUpdate(tourId, {
-//       ratingQuantity: 0,
-//       ratingAverage: 0,
-//     })
-//   }
-// }
+  const totalPrice = parseFloat(result[0].totalPrice.toFixed(2))
+  return { result, totalPrice }
+}
 
 const User = model<IUser, UserModel>('User', userSchema)
 
