@@ -1,5 +1,11 @@
-import { Schema } from 'mongoose'
-import { IUser, IUserAddress, IUserName, IUserOrder } from './users.interface'
+import { Model, Schema } from 'mongoose'
+import {
+  IUser,
+  IUserAddress,
+  IUserName,
+  IUserOrder,
+  UserModel,
+} from './users.interface'
 import { model } from 'mongoose'
 
 const userNameSchema = new Schema<IUserName>({
@@ -40,7 +46,7 @@ const userOrderSchema = new Schema<IUserOrder>({
   },
 })
 
-const userSchema = new Schema<IUser>({
+const userSchema = new Schema<IUser, UserModel>({
   userId: {
     type: Number,
     required: [true, 'user id is required'],
@@ -95,6 +101,12 @@ userSchema.pre('find', function (next) {
   next()
 })
 
-const User = model<IUser>('User', userSchema)
+// custom static method to determine if the user exist or not
+userSchema.statics.isUserExist = async function (userId: number) {
+  const exisingUser = await User.findOne({ userId })
+  return exisingUser
+}
+
+const User = model<IUser, UserModel>('User', userSchema)
 
 export default User
