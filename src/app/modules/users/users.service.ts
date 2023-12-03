@@ -27,7 +27,7 @@ const updateUser = async (
     { userId: userId },
     { $set: userData },
     { new: true, runValidators: true },
-  )
+  ).select('-orders')
   return result
 }
 

@@ -28,7 +28,7 @@ export interface IUser {
   isActive: boolean
   hobbies: string[]
   address: IUserAddress
-  orders: IUserOrder[] | null
+  orders?: IUserOrder[]
 }
 
 // static methods

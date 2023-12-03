@@ -48,50 +48,61 @@ const userOrderSchema = new Schema<IUserOrder>({
   },
 })
 
-const userSchema = new Schema<IUser, UserModel>({
-  userId: {
-    type: Number,
-    required: [true, 'user id is required'],
-    unique: true,
+const userSchema = new Schema<IUser, UserModel>(
+  {
+    userId: {
+      type: Number,
+      required: [true, 'user id is required'],
+      unique: true,
+    },
+    username: {
+      type: String,
+      unique: true,
+    },
+    password: {
+      type: String,
+      select: false,
+      required: [true, 'password is required'],
+      maxlength: [20, 'password can not be more than 20 charecter'],
+    },
+    fullName: {
+      type: userNameSchema,
+      required: [true, 'Student Name is required'],
+    },
+    age: {
+      type: Number,
+      required: [true, 'user id is required'],
+    },
+    email: {
+      type: String,
+      required: [true, 'email is required'],
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    hobbies: {
+      type: [String],
+      required: [true, 'Hobbies is required'],
+    },
+    address: {
+      type: userAddressSchema,
+      required: [true, 'Address is required'],
+    },
+    orders: {
+      type: [userOrderSchema],
+    },
   },
-  username: {
-    type: String,
-    unique: true,
+  {
+    // Set the transform option to exclude the 'password' field from JSON output
+    toJSON: {
+      transform: (doc, ret) => {
+        delete ret.password
+        return ret
+      },
+    },
   },
-  password: {
-    type: String,
-    select: false,
-    required: [true, 'password is required'],
-    maxlength: [20, 'password can not be more than 20 charecter'],
-  },
-  fullName: {
-    type: userNameSchema,
-    required: [true, 'Student Name is required'],
-  },
-  age: {
-    type: Number,
-    required: [true, 'user id is required'],
-  },
-  email: {
-    type: String,
-    required: [true, 'email is required'],
-  },
-  isActive: {
-    type: Boolean,
-    default: true,
-  },
-  hobbies: {
-    type: [String],
-    required: [true, 'Hobbies is required'],
-  },
-  address: {
-    type: userAddressSchema,
-    required: [true, 'Address is required'],
-  },
-  orders: {
-    type: [userOrderSchema],
-  },
-})
+)
 
 userSchema.pre('find', function (next) {
   this.find().projection({
@@ -143,18 +154,6 @@ userSchema.pre('save', async function (next) {
   )
   next()
 })
-
-// pre save middleware/ hook
-userSchema.post('save', function (doc, next) {
-  // doc.password = '' // Empty the hashed password
-  next()
-})
-
-// userSchema.methods.toJSON = function () {
-//   const userObject = this.toObject()
-//   delete userObject.password
-//   return userObject
-// }
 
 const User = model<IUser, UserModel>('User', userSchema)
 

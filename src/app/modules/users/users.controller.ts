@@ -2,12 +2,17 @@
 import { Request, Response } from 'express'
 import User from './users.model'
 import { userServices } from './users.service'
+import { userValidationSchema } from './users.validation'
 
 // Create a new user
 const crateUser = async (req: Request, res: Response) => {
   try {
     const userData = req.body
-    const result = await userServices.createUser(userData)
+
+    // data valiation using zod
+    const zodParseData = userValidationSchema.parse(userData)
+
+    const result = await userServices.createUser(zodParseData)
 
     res.status(201).json({
       status: 'succcess',
@@ -82,14 +87,10 @@ const updateUser = async (req: Request, res: Response) => {
     if (existingUser) {
       const result = await userServices.updateUser(userId, updatedData)
 
-      const resultObject = result.toObject()
-      const responseData = { ...resultObject }
-      delete responseData.orders
-
       res.status(200).json({
         success: true,
         message: 'User updated successfully!',
-        data: responseData,
+        data: result,
       })
     } else {
       res.status(404).json({
