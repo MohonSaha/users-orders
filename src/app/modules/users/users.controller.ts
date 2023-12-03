@@ -13,11 +13,14 @@ const crateUser = async (req: Request, res: Response) => {
     const zodParseData = userValidationSchema.parse(userData)
 
     const result = await userServices.createUser(zodParseData)
+    // Exclude password field
+    const resultWithoutPassword = JSON.parse(JSON.stringify(result))
+    delete resultWithoutPassword.password
 
     res.status(201).json({
       status: 'succcess',
       message: 'User created successfully!',
-      data: result,
+      data: resultWithoutPassword,
     })
   } catch (error: any) {
     // eslint-disable-next-line no-console

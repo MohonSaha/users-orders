@@ -93,15 +93,15 @@ const userSchema = new Schema<IUser, UserModel>(
       type: [userOrderSchema],
     },
   },
-  {
-    // Set the transform option to exclude the 'password' field from JSON output
-    toJSON: {
-      transform: (doc, ret) => {
-        delete ret.password
-        return ret
-      },
-    },
-  },
+  // {
+  //   // Set the transform option to exclude the 'password' field from JSON output
+  //   toJSON: {
+  //     transform: (doc, ret) => {
+  //       delete ret.password
+  //       return ret
+  //     },
+  //   },
+  // },
 )
 
 userSchema.pre('find', function (next) {
