@@ -12,7 +12,7 @@ app.use('/api/v1/users', UserRoute)
 app.get('/', (req: Request, res: Response) => {
   res.status(200).json({
     status: 'success',
-    message: 'Wellcome to users and orders db',
+    message: 'Wellcome to users and orders project by mohon saha',
   })
 })
 

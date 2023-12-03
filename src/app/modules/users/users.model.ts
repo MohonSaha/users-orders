@@ -1,13 +1,14 @@
-import { Model, Schema } from 'mongoose'
+import { Schema } from 'mongoose'
 import {
   IUser,
   IUserAddress,
   IUserName,
   IUserOrder,
-  OrdersTotalModel,
   UserModel,
 } from './users.interface'
 import { model } from 'mongoose'
+import config from '../../config'
+import bcrypt from 'bcrypt'
 
 const userNameSchema = new Schema<IUserName>({
   firstName: {
@@ -59,6 +60,7 @@ const userSchema = new Schema<IUser, UserModel>({
   },
   password: {
     type: String,
+    select: false,
     required: [true, 'password is required'],
     maxlength: [20, 'password can not be more than 20 charecter'],
   },
@@ -110,6 +112,7 @@ userSchema.statics.isUserExist = async function (userId: number) {
 
 userSchema.statics.calcOrdersTotal = async function (
   userId: number,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<{ result: any; totalPrice: number }> {
   const result = await User.aggregate([
     { $match: { userId: userId } },
@@ -127,6 +130,31 @@ userSchema.statics.calcOrdersTotal = async function (
   const totalPrice = parseFloat(result[0].totalPrice.toFixed(2))
   return { result, totalPrice }
 }
+
+// We will use it to hash our password
+userSchema.pre('save', async function (next) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const user = this
+
+  // Hashing password and save into db
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bcrypt_salt_round),
+  )
+  next()
+})
+
+// pre save middleware/ hook
+userSchema.post('save', function (doc, next) {
+  // doc.password = '' // Empty the hashed password
+  next()
+})
+
+// userSchema.methods.toJSON = function () {
+//   const userObject = this.toObject()
+//   delete userObject.password
+//   return userObject
+// }
 
 const User = model<IUser, UserModel>('User', userSchema)
 

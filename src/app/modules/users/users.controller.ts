@@ -8,6 +8,7 @@ const crateUser = async (req: Request, res: Response) => {
   try {
     const userData = req.body
     const result = await userServices.createUser(userData)
+
     res.status(201).json({
       status: 'succcess',
       message: 'User created successfully!',

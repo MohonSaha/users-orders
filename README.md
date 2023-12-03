@@ -49,13 +49,13 @@ Before you begin, ensure you have the following installed on your machine:
 
 To run the application in development mode, use the following command:
 
-     npm run start:dev
+        npm run start:dev
 
 ## Linting and Formatting
 
 1.  Lint the code:
 
-    ```bash
+    ```
     npm run lint
     ```
 
@@ -68,15 +68,11 @@ To run the application in development mode, use the following command:
 3.  Format code using Prettier:
 
     ```
-
     npm run prettier
-
     ```
 
 4.  Automatically fix formatting issues:
 
     ```
-
     npm run prettier:fix
-
     ```

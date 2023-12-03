@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Model } from 'mongoose'
 
 export interface IUserName {
@@ -33,5 +34,6 @@ export interface IUser {
 // static methods
 export interface UserModel extends Model<IUser> {
   isUserExist(id: number): Promise<IUser | null>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   calcOrdersTotal(userId: number): Promise<{ result: any; totalPrice: number }>
 }
