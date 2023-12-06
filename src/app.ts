@@ -7,7 +7,7 @@ import { UserRoute } from './app/modules/users/users.route'
 app.use(express.json())
 app.use(cors())
 
-app.use('/api/v1/users', UserRoute)
+app.use('/api/users', UserRoute)
 
 app.get('/', (req: Request, res: Response) => {
   res.status(200).json({

@@ -21,7 +21,7 @@ const getSingleUser = async (userId: number): Promise<IUser | null> => {
 //update user data
 const updateUser = async (
   userId: number,
-  userData: IUser,
+  userData: Partial<IUser>,
 ): Promise<IUser | null> => {
   const result = await User.findOneAndUpdate(
     { userId: userId },

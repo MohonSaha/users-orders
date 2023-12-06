@@ -2,25 +2,27 @@
 import { Request, Response } from 'express'
 import User from './users.model'
 import { userServices } from './users.service'
-import { userValidationSchema } from './users.validation'
+import {
+  userOrderValidationSchema,
+  userValidationSchema,
+} from './users.validation'
 
 // Create a new user
 const crateUser = async (req: Request, res: Response) => {
   try {
-    const userData = req.body
-
     // data valiation using zod
-    const zodParseData = userValidationSchema.parse(userData)
+    const zodParseData = userValidationSchema.parse(req.body)
 
     const result = await userServices.createUser(zodParseData)
     // Exclude password field
-    const resultWithoutPassword = JSON.parse(JSON.stringify(result))
-    delete resultWithoutPassword.password
+    const modifiedResult = JSON.parse(JSON.stringify(result))
+    delete modifiedResult.password
+    delete modifiedResult.orders
 
     res.status(201).json({
-      status: 'succcess',
+      success: true,
       message: 'User created successfully!',
-      data: resultWithoutPassword,
+      data: modifiedResult,
     })
   } catch (error: any) {
     // eslint-disable-next-line no-console
@@ -37,7 +39,7 @@ const getAllUser = async (req: Request, res: Response) => {
   try {
     const result = await userServices.getAllUsers()
     res.status(201).json({
-      status: 'succcess',
+      success: true,
       message: 'Users fetched successfully!',
       data: result,
     })
@@ -59,7 +61,7 @@ const getSingleUser = async (req: Request, res: Response) => {
     const existingUser = await User.isUserExist(userId)
     if (existingUser) {
       res.status(200).json({
-        status: 'success',
+        success: true,
         message: 'User fetched successfully!',
         data: existingUser,
       })
@@ -84,11 +86,14 @@ const getSingleUser = async (req: Request, res: Response) => {
 const updateUser = async (req: Request, res: Response) => {
   try {
     const userId = parseInt(req.params.userId)
-    const updatedData = req.body
+    // const updatedData = req.body
 
     const existingUser = await User.isUserExist(userId)
     if (existingUser) {
-      const result = await userServices.updateUser(userId, updatedData)
+      // data valiation using zod
+      const zodParseData = userValidationSchema.parse(req.body)
+
+      const result = await userServices.updateUser(userId, zodParseData)
 
       res.status(200).json({
         success: true,
@@ -123,8 +128,8 @@ const deleteUser = async (req: Request, res: Response) => {
     const id = parseInt(req.params.userId, 10)
     await userServices.deleteUser(id)
     res.status(200).json({
-      status: 'succcess',
-      message: 'user deleted successfully',
+      success: true,
+      message: 'User updated successfully!',
       data: null,
     })
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -142,12 +147,14 @@ const deleteUser = async (req: Request, res: Response) => {
 const addOrder = async (req: Request, res: Response) => {
   try {
     const userId = parseInt(req.params.userId, 10)
-    const orderInfo = req.body
 
     // Use the custom static method to check if the user exists
     const existingUser = await User.isUserExist(userId)
     if (existingUser) {
-      await userServices.addOrderIntoDB(userId, orderInfo)
+      // data valiation using zod
+      const zodParseData = userOrderValidationSchema.parse(req.body)
+
+      await userServices.addOrderIntoDB(userId, zodParseData)
       res.status(200).json({
         success: true,
         message: 'Order created successfully!',

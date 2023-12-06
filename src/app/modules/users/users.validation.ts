@@ -21,7 +21,7 @@ const userAddressValidationSchema = z.object({
   }),
 })
 
-const userOrderValidationSchema = z.object({
+export const userOrderValidationSchema = z.object({
   productName: z.string(),
   price: z.number(),
   quantity: z.number(),
