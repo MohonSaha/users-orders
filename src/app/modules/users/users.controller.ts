@@ -60,10 +60,14 @@ const getSingleUser = async (req: Request, res: Response) => {
     // Use the custom static method to check if the user exists
     const existingUser = await User.isUserExist(userId)
     if (existingUser) {
+      // Exclude orders field
+      const modifiedResult = JSON.parse(JSON.stringify(existingUser))
+      delete modifiedResult.orders
+
       res.status(200).json({
         success: true,
         message: 'User fetched successfully!',
-        data: existingUser,
+        data: modifiedResult,
       })
     } else {
       res.status(404).json({

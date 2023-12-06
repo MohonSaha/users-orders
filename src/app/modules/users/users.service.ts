@@ -14,7 +14,7 @@ const getAllUsers = async (): Promise<IUser[]> => {
 
 // get single user through userId
 const getSingleUser = async (userId: number): Promise<IUser | null> => {
-  const result = await User.findOne({ userId }).select('-password')
+  const result = await User.findOne({ userId })
   return result
 }
 
